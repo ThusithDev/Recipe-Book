@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.RecipeBook" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#FC5835</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
+    <!-- Splash screen theme -->
+    <style name="Theme.RecipeBook.Splash" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Background color -->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <!-- Makes the status bar and nav bar match the splash color -->
+        <item name="android:statusBarColor">#FC5835</item>
+        <item name="android:navigationBarColor">#FC5835</item>
+    </style>
+
+</resources>
