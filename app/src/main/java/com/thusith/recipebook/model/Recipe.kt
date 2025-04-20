@@ -1,7 +1,7 @@
 package com.thusith.recipebook.model
 
 data class Recipe(
-    val id: String,
+    val id: String? = null,
     val title: String,
     val ingredients: String,
     val instructions: String,

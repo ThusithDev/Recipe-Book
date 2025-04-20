@@ -124,7 +124,6 @@ fun LoginScreen(navController: NavHostController, userDao: UserDao) {
         ) {
             TextButton(
                 onClick = {
-                    // Your navigation logic
                     navController.popBackStack()
                     navController.navigate("RegisterScreen")
                 },
@@ -155,7 +154,7 @@ fun LoginScreen(navController: NavHostController, userDao: UserDao) {
 
                 when (result) {
                     is Resource.Success<*> -> {
-                        // Save token or user data if needed
+                        // Save user data if needed
                         navController.navigate("HomeScreen") {
                             popUpTo("LoginScreen") { inclusive = true }
                         }

@@ -153,7 +153,7 @@ fun BottomNavigationBar(
             .background(Color(0xFF1C0905))
             .padding(bottom = 10.dp)
             .height(height)
-            .clip(RoundedCornerShape(16.dp)), // Set desired corner radius
+            .clip(RoundedCornerShape(16.dp)),
         color = backgroundColor
     ) {
         Row(

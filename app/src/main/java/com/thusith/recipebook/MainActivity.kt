@@ -73,11 +73,20 @@ class MainActivity : ComponentActivity() {
                                 RecipeDetailScreen(recipe = it, navController = navController)
                             }
                         }
+                        composable("Create") {
+                            CreateRecipeScreen(navController = navController)
+                        }
+                        composable("Categories") {
+                            CategoryScreen(navController = navController)
+                        }
+                        composable("CategoryRecipes/{category}") { backStackEntry ->
+                            val category = backStackEntry.arguments?.getString("category") ?: "Unknown"
+                            CategoryRecipesScreen(category = category, navController = navController)
+                        }
 
                     }
                 }
             }
         }
     }
-
 }

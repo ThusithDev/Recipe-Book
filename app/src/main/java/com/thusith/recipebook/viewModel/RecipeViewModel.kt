@@ -29,6 +29,19 @@ class RecipeViewModel : ViewModel() {
         }
     }
 
+    fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                recipeApi.addRecipe(recipe)
+                fetchRecipes()
+                onSuccess()
+            } catch (e: Exception) {
+                Log.e("RecipeViewModel", "Failed to add recipe: ${e.message}")
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
     fun deleteRecipe(id: String) {
         viewModelScope.launch {
             recipeApi.deleteRecipe(id)
