@@ -78,4 +78,5 @@ dependencies {
     implementation("androidx.room:room-ktx:2.7.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.accompanist:accompanist-insets:0.30.1")
 }

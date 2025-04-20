@@ -24,8 +24,10 @@ import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.thusith.recipebook.data.local.AppDatabase
+import com.thusith.recipebook.viewModel.RecipeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +42,7 @@ class MainActivity : ComponentActivity() {
 
         val userDao = db.userDao()
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        window.statusBarColor = Color.parseColor("#FC5835")
-        window.navigationBarColor = Color.parseColor("#FC5835")
-        enableEdgeToEdge()
+        // enableEdgeToEdge()
         setContent {
             RecipeBookTheme {
                 Surface(
@@ -66,6 +64,16 @@ class MainActivity : ComponentActivity() {
                         composable("RegisterScreen"){
                             RegisterScreen(navController = navController, userDao = userDao)
                         }
+                        composable("RecipeDetail/{recipeId}") { backStackEntry ->
+                            val recipeViewModel: RecipeViewModel = viewModel() // <-- local ViewModel instance
+                            val recipeId = backStackEntry.arguments?.getString("recipeId")
+                            val recipe = recipeViewModel.recipes.value.find { it.id == recipeId }
+
+                            recipe?.let {
+                                RecipeDetailScreen(recipe = it, navController = navController)
+                            }
+                        }
+
                     }
                 }
             }
