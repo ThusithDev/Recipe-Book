@@ -26,8 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.thusith.recipebook.data.local.AppDatabase
 import com.thusith.recipebook.model.Recipe
 import com.thusith.recipebook.viewModel.RecipeViewModel
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun CreateRecipeScreen(
@@ -39,6 +41,7 @@ fun CreateRecipeScreen(
     var instructions by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -79,15 +82,21 @@ fun CreateRecipeScreen(
             OutlinedTextField(value = instructions, onValueChange = { instructions = it }, label = { Text("Instructions") })
             OutlinedTextField(value = imageUrl, onValueChange = { imageUrl = it }, label = { Text("Image URL") })
             OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
+            OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Your Email") })
 
             Button(onClick = {
-                if (title.isNotBlank() && ingredients.isNotBlank()) {
+                if (title.isNotBlank() && ingredients.isNotBlank() && email.isNotBlank()) {
+
+                    val userDao = AppDatabase.getDatabase(context).userDao()
+                    val loggedEmail = runBlocking { userDao.getUser()?.email ?: "" }
+
                     val newRecipe = Recipe(
                         title = title,
                         ingredients = ingredients,
                         instructions = instructions,
                         imageUrl = imageUrl,
-                        category = category
+                        category = category,
+                        email = email
                     )
 
                     recipeViewModel.addRecipe(

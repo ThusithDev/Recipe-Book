@@ -40,11 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.thusith.recipebook.data.local.UserDao
+import com.thusith.recipebook.data.local.UserEntity
 import com.thusith.recipebook.data.remote.AuthRepository
 import com.thusith.recipebook.data.remote.RetrofitInstance
 import com.thusith.recipebook.model.LoginRequest
 import com.thusith.recipebook.utils.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 @Composable

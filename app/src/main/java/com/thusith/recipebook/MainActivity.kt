@@ -23,6 +23,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
@@ -44,12 +45,15 @@ class MainActivity : ComponentActivity() {
 
         // enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+
             RecipeBookTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+                    val recipeViewModel: RecipeViewModel = viewModel()
 
                     NavHost(navController = navController, startDestination = "Splash") {
                         composable("Splash") {
@@ -83,7 +87,9 @@ class MainActivity : ComponentActivity() {
                             val category = backStackEntry.arguments?.getString("category") ?: "Unknown"
                             CategoryRecipesScreen(category = category, navController = navController)
                         }
-
+                        composable("Profile") {
+                            ProfileScreen(navController = navController, context= context, recipeViewModel = recipeViewModel)
+                        }
                     }
                 }
             }

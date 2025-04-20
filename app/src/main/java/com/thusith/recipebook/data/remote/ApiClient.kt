@@ -14,4 +14,3 @@ object ApiClient {
             .create(RecipeApi::class.java)
     }
 }
-

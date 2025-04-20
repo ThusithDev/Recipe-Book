@@ -35,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "app_database"
+                    "recipe-db"
                 )
                     .addMigrations(MIGRATION_1_2)  // Add migration
                     .build()
@@ -47,3 +47,4 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 // .fallbackToDestructiveMigration(false) // a temporary line
+// app_database

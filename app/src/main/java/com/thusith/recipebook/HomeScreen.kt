@@ -1,5 +1,9 @@
 package com.thusith.recipebook
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -29,16 +35,21 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,9 +62,32 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.thusith.recipebook.model.Recipe
 import com.thusith.recipebook.viewModel.RecipeViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+/**
+  Author -: Thusith Wickramasinghe
+* */
 
 @Composable
 fun HomeScreen(navController: NavHostController, recipeViewModel: RecipeViewModel = viewModel()) {
+
+    val activity = LocalActivity.current as? Activity
+
+    DoubleBackToExitApp {
+        activity?.finish()
+    }
+
+    // var searchQuery by rememberSaveable { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredRecipes = if (searchQuery.isBlank()) {
+        recipeViewModel.recipes.value
+    } else {
+        recipeViewModel.recipes.value.filter {
+            it.title.contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     val items = listOf(
         BottomNavigationItem(
@@ -90,7 +124,7 @@ fun HomeScreen(navController: NavHostController, recipeViewModel: RecipeViewMode
                 selectedIndex = selectedItemIndex,
                 onItemSelected = { index ->
                     selectedItemIndex = index
-                    // Handle navigation or other logic here
+
                     navController.navigate(items[index].title)
                 },
                 height = 46.dp // Custom height
@@ -112,14 +146,41 @@ fun HomeScreen(navController: NavHostController, recipeViewModel: RecipeViewMode
                     .padding(top = 8.dp, start = 70.dp, end = 4.dp)
                     .fillMaxWidth()
             ) {
+
                 Text(
                     text = "Recipe Book",
                     color = Color(0xFFFFFFFF),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(40.dp)
+                    modifier = Modifier.padding(30.dp)
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.pizza), // replace with your actual drawable name
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(68.dp)
+                        .padding(start = 8.dp)
                 )
             }
+
+            // Search bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search recipes...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    backgroundColor = Color.White,
+                    textColor = Color.Black,
+                    focusedBorderColor = Color.Gray,
+                    unfocusedBorderColor = Color.LightGray
+                )
+            )
 
             LazyColumn(
                 modifier = Modifier
@@ -129,11 +190,18 @@ fun HomeScreen(navController: NavHostController, recipeViewModel: RecipeViewMode
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
+                items(filteredRecipes) { recipe ->
+                    RecipeCard(recipe = recipe) {
+                        navController.navigate("RecipeDetail/${recipe.id}")
+                    }
+                }
+                /**
                 items(recipeViewModel.recipes.value) { recipe ->
                     RecipeCard(recipe = recipe) {
                         navController.navigate("RecipeDetail/${recipe.id}")
                     }
                 }
+                **/
             }
         }
 
@@ -243,3 +311,24 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
     }
 }
 
+@Composable
+fun DoubleBackToExitApp(onExit: () -> Unit) {
+    var backPressedOnce by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    BackHandler {
+        if (backPressedOnce) {
+            onExit()
+        } else {
+            backPressedOnce = true
+            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
+
+            // Reset the flag after 2 seconds
+            scope.launch {
+                delay(2000)
+                backPressedOnce = false
+            }
+        }
+    }
+}

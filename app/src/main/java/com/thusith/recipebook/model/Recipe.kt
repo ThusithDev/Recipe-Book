@@ -6,6 +6,8 @@ data class Recipe(
     val ingredients: String,
     val instructions: String,
     val imageUrl: String,
-    val category: String
+    val category: String,
+    val email: String
 )
+
 
