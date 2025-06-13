@@ -264,6 +264,7 @@ fun RecipeEditDialog(
                     value = titleState.value,
                     onValueChange = { titleState.value = it },
                     label = { Text("Title") },
+                    shape = OutlinedTextFieldDefaults.shape,
                     modifier = Modifier.fillMaxWidth()
                 )
 
